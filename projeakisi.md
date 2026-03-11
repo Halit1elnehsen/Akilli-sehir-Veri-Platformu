@@ -24,7 +24,7 @@
 
 Akıllı Şehir Veri Platformu — Bulut Teknoloji Karşılaştırma Raporu Proje: Akıllı Şehir Veri Platformu | Tarih: Mart 2025 | Amaç: Sensör verisi toplama, işleme, depolama ve görselleştirme için en uygun teknolojilerin belirlenmesi
 ________________________________________
-1. BULUT PLATFORMLARI
+##1. BULUT PLATFORMLARI
 Amazon Web Services (AWS)
 AWS, 250'den fazla hizmetiyle piyasanın en geniş portföyünü sunan lider bulut platformudur. IoT Core ve Greengrass servisleri sayesinde sensör yönetimi ve edge computing konusunda güçlü bir altyapı sunar.
 Avantajları:
