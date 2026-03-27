@@ -888,3 +888,110 @@ Veritabanında kullanıcı bilgileri saklanırken güvenlik önemlidir. Şifrele
 
 10. Sonuç
 Bu çalışmada, bir görev yönetim sistemi için NoSQL veritabanı şeması tasarlanmıştır. Kullanıcılar, görevler ve kategoriler arasında ilişkiler kurulmuş ve veri yapısı detaylı şekilde açıklanmıştır. Tasarlanan sistem, esnek yapısı ve yüksek performansı sayesinde modern uygulamalar için uygun bir çözüm sunmaktadır.
+
+# 📌 API Tasarımı Projesi
+
+## 🎯 Proje Amacı
+
+Bu proje, bir veri platformunun dış dünyaya açılacak API’lerinin tasarlanması ve dokümante edilmesi amacıyla hazırlanmıştır.
+
+---
+
+## 📊 Sistem Tanımı
+
+Bu API, kullanıcıların veri ekleyebildiği, görüntüleyebildiği ve silebildiği basit bir veri platformunu temsil eder.
+
+---
+
+## 🔗 Base URL
+
+https://api.example.com/v1
+
+---
+
+## 📌 Endpointler
+
+### 🔹 Kullanıcı Oluştur
+
+**POST /users**
+
+Request:
+{
+"name": "Mustafa",
+"email": "[mustafa@email.com](mailto:mustafa@email.com)"
+}
+
+Response:
+{
+"id": 1,
+"name": "Mustafa",
+"email": "[mustafa@email.com](mailto:mustafa@email.com)"
+}
+
+---
+
+### 🔹 Kullanıcıları Listele
+
+**GET /users**
+
+Response:
+[
+{
+"id": 1,
+"name": "Mustafa",
+"email": "[mustafa@email.com](mailto:mustafa@email.com)"
+}
+]
+
+---
+
+### 🔹 Veri Ekle
+
+**POST /data**
+
+Request:
+{
+"title": "Test Veri",
+"content": "Bu bir test verisidir",
+"user_id": 1
+}
+
+---
+
+### 🔹 Verileri Listele
+
+**GET /data**
+
+---
+
+### 🔹 Veri Sil
+
+**DELETE /data/{id}**
+
+---
+
+## 🔐 Güvenlik
+
+* API anahtarı (API Key) kullanılmalıdır
+* HTTPS zorunludur
+
+---
+
+## 📈 Ölçeklenebilirlik
+
+* Sistem mikroservis mimarisine uygun şekilde geliştirilebilir
+* Yük dengeleme (load balancer) kullanılabilir
+
+---
+
+## 🛠️ Kullanılan Teknolojiler
+
+* REST API
+* JSON
+* HTTP Protokolü
+
+---
+
+## 👨‍💻 Geliştirici
+
+Mustafa Alp Çalı
