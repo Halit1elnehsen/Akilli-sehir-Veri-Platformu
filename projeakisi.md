@@ -838,3 +838,44 @@ Request:
 ## 👨‍💻 Geliştirici
 
 Mustafa Alp Çalı
+==============================
+## 📅 VERİ KAYNAKLARI ANALİZİ VE ENTEGRASYON PLANI
+**Sorumlu:** Halid ELNEHSEN 
+
+### 1. Veri Kaynakları ve Sensör Analizi
+Akıllı Şehir Veri Platformu'nu besleyecek 3 ana veri kaynağı belirlenmiş ve bu kaynakların özellikleri aşağıdaki gibi standardize edilmiştir:
+
+| Veri Kaynağı (Sensör) | Veri Formatı | İletim Sıklığı | Veri Doğruluğu / Hassasiyet | İletişim Protokolü |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Hava Kalitesi (AQI) Sensörleri** | JSON | Her 5 Dakikada Bir | ±%2 Hata Payı (Yüksek) | MQTT |
+| **2. Trafik Yoğunluk Kameraları** | JSON (Metadata) | Her 30 Saniyede Bir | Orta (Görüntü işleme tabanlı) | REST API (HTTP/POST) |
+| **3. Akıllı Enerji Sayaçları** | JSON | Her 1 Saatte Bir | Kesin (Fatura standartlarında) | MQTT |
+
+### 2. Erişim ve Entegrasyon Yöntemleri
+Sensörlerden gelen verilerin merkezi sisteme (Bulut'a) entegrasyonu için aşağıdaki mimari plan uygulanacaktır:
+
+* **MQTT Protokolü (Hava Kalitesi ve Enerji):** Sahadaki on binlerce düşük güçlü sensör, batarya tasarrufu ve düşük bant genişliği tüketimi sağlayan MQTT protokolünü kullanarak doğrudan **Azure IoT Hub**'a bağlanacaktır.
+* **REST API Entegrasyonu (Trafik):** Şehirdeki mevcut trafik kameralarının ürettiği yoğunluk verileri (araç sayımı vb.), üçüncü taraf bir sunucudan `HTTP POST` metodu ile sistemimizin API Gateway'ine (Azure APIM) iletilecektir.
+* **Veri Akış Borusu (Pipeline):** Azure IoT Hub'a düşen tüm ham veriler, daha önce planlanan **Apache Kafka** kümesine aktarılacak; oradan da zaman serisi analizleri için InfluxDB'ye yazılacaktır.
+
+### 3. Örnek Veri Formatları (Protokol Belgelemesi)
+Sistemdeki diğer geliştiricilerin (Backend ve Veritabanı ekipleri) entegrasyon süreçlerine başlayabilmesi için standart JSON veri şablonları (Payload) oluşturulmuştur.
+
+**Örnek: Hava Kalitesi (AQI) Sensörü JSON Formatı**
+```json
+{
+  "sensorId": "AQI-1045",
+  "timestamp": "2026-04-19T10:15:00Z",
+  "location": {
+    "lat": 38.6748,
+    "lng": 39.2225
+  },
+  "measurements": {
+    "pm25": 45.2,
+    "co2": 410,
+    "aqi_index": 165
+  },
+  "batteryLevel": 88
+}
+
+
