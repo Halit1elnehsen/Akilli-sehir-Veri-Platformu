@@ -878,7 +878,6 @@ Sistemdeki diğer geliştiricilerin (Backend ve Veritabanı ekipleri) entegrasyo
   "batteryLevel": 88
 }
 
-
 # 🏙️ Akıllı Şehir Projesi: NoSQL Veri Mimarisi Raporu
 
 **Hazırlayan:** [Mustafa Alp Çalı]
