@@ -879,3 +879,52 @@ Sistemdeki diğer geliştiricilerin (Backend ve Veritabanı ekipleri) entegrasyo
 }
 
 
+# 🏙️ Akıllı Şehir Projesi: NoSQL Veri Mimarisi Raporu
+
+**Hazırlayan:** [Mustafa Alp Çalı]
+**İlgili Birim:** Veri Yönetimi ve Veritabanı Grubu
+**Tarih:** 19 Nisan 2026
+
+---
+
+## 1. NoSQL Teknolojileri Karşılaştırma Analizi
+
+Projemizin ihtiyaç duyduğu yüksek hız ve değişken veri yapısı (Hava Kalitesi, Trafik, Enerji) baz alınarak yapılan teknolojik kıyaslama aşağıdadır:
+
+| Özellik | MongoDB (Doküman) | Cassandra (Sütun) | Redis (Key-Value) |
+| :--- | :--- | :--- | :--- |
+| **Veri Yapısı** | Esnek JSON (BSON) | Geniş Sütunlu Tablo | Anahtar-Değer |
+| **Sorgu Yeteneği** | Çok Yüksek (Zengin) | Orta (Sınırlı) | Temel |
+| **Coğrafi Destek** | Yerleşik (Native) | Eklentiyle | Kısıtlı |
+| **Ölçekleme** | Yatay (Sharding) | Yatay (Masterless) | Dikey/Yatay |
+
+## 2. Teknoloji Kararı ve Stratejik Gerekçeler
+
+Yapılan analiz sonucunda projemizde ana veritabanı olarak **MongoDB** kullanılmasına karar verilmiştir.
+
+**Gerekçelerimiz:**
+* **Doğrudan Entegrasyon:** Sensörlerden gelen veriler zaten JSON formatında olduğu için veri kaybı veya dönüşüm maliyeti oluşmaz.
+* **Coğrafi Konum (Spatial) Gücü:** Şehirdeki sensörlerin lokasyon bazlı (harita üzerinden) sorgulanması MongoDB ile çok daha hızlıdır.
+* **Halid'in Planıyla Uyumluluk:** Mevcut Kafka pipeline yapısından gelen veriler "olduğu gibi" doküman koleksiyonlarına aktarılabilir.
+
+## 3. Detaylı Veri Modeli Tasarımı
+
+Şehir verilerinin standart depolama şeması (Schema) aşağıdaki gibi olacaktır:
+
+### Örnek Veri Yapısı (JSON)
+```json
+{
+  "sensor_id": "AQI-1045",
+  "type": "HAVA_KALITESI",
+  "city": "Elazığ",
+  "location": {
+    "type": "Point",
+    "coordinates": [39.2225, 38.6748]
+  },
+  "measurements": {
+    "pm25": 45.2,
+    "co2": 410,
+    "aqi_index": 165
+  },
+  "timestamp": "2026-04-19T10:15:00Z"
+}
