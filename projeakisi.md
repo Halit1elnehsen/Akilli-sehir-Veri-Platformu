@@ -927,3 +927,92 @@ Yapılan analiz sonucunda projemizde ana veritabanı olarak **MongoDB** kullanı
   },
   "timestamp": "2026-04-19T10:15:00Z"
 }
+
+      TEKNİK PROJE RAPORU: Akıllı Şehir Sensör Veritabanı (MongoDB NoSQL Mimarisi)
+Proje Adı: Smart City Sensors
+Hazırlayan: Muhammet Eren Alptekin
+Kullanılan Teknolojiler: Node.js, MongoDB, Docker, Mongo Express
+
+1. Yönetici Özeti (Executive Summary)
+Bu proje, büyük ölçekli akıllı şehir altyapılarında (trafik, hava kalitesi, enerji tüketimi) oluşan IoT sensör verilerini işlemek, depolamak ve analiz etmek amacıyla tasarlanmış yüksek performanslı bir MongoDB NoSQL veritabanı mimarisidir. Proje; veri tutarlılığını sağlayan JSON Schema validasyonlarını, okuma performansını maksimize eden gelişmiş indeksleme stratejilerini ve karmaşık veri analitiği için Aggregation Pipeline entegrasyonlarını içermektedir.
+
+2. Proje Mimarisi ve Dosya Yapısı
+Proje, modüler ve genişletilebilir bir dizin yapısına (smart-city-sensors) sahiptir. Uygulama katmanında endüstri standardı olan mimari desenler tercih edilmiştir.
+
+src/db.js: Veritabanı bağlantı yönetimi için Singleton ve Connection Pool tasarım desenleri kullanılmıştır. Bu sayede mikroservis veya yüksek trafikli senaryolarda bağlantı maliyetleri (overhead) minimize edilmiştir.
+
+src/setup-database.js: Koleksiyonların oluşturulması, JSON Schema doğrulama kurallarının (validation) sisteme tanımlanması ve indekslerin basılması işlemlerini yönetir.
+
+src/seed-data.js: Sistemin test edilebilmesi için İstanbul'un 18 farklı lokasyonunu baz alan, gerçeğe yakın (pik saatler, kış aylarında artan kirlilik vb.) algoritmik test verisi üretir.
+
+Konteynerizasyon (docker-compose.yml): Veritabanı ve yönetim arayüzü (Mongo Express), taşınabilirlik ve izole geliştirme ortamı sağlamak adına Docker üzerinden ayağa kaldırılmaktadır.
+
+3. İndeksleme Stratejisi ve Performans Optimizasyonu
+Milyonlarca satırlık sensör verisinin hızlı sorgulanabilmesi ve disk maliyetlerinin optimize edilmesi için 5 farklı indeksleme türü stratejik olarak konumlandırılmıştır:
+
+Compound Index (Bileşik İndeks): Sık kullanılan sorgu kalıpları için uygulanmıştır. Örneğin; {sensor_id: 1, timestamp: -1} indeksi ile belirli bir sensörün zaman serisi verilerine anında erişim sağlanır.
+
+TTL Index (Time-To-Live): Zaman aşımına uğramış operasyonel verilerin diskte yer kaplamaması için otomatik silme mekanizması kurulmuştur. Tolerans süreleri veri tipine göre özelleştirilmiştir: Trafik verileri için 90 gün, Hava Kalitesi (AQI) için 1 yıl ve Enerji verileri için 2 yıl.
+
+2dsphere (Geospatial Index): Konum tabanlı analizler için metadata koleksiyonuna entegre edilmiştir. "Taksim'e en yakın 3 sensör" gibi mesafe hesaplamalı mekansal sorguların optimizasyonunu sağlar.
+
+Partial Index (Kısmi İndeks): Yalnızca belirli bir koşulu sağlayan belgelerin indekslenmesini sağlayarak ciddi oranda RAM ve disk tasarrufu elde edilmiştir. Örneğin; trafik sensörlerinde sadece hız ihlali yapanlar (> 90 km/s), hava kalitesinde sadece tehlikeli seviyeler (AQI > 100) ve sadece aktif (status='active') olan alarmlar indekslenmiştir.
+
+Tag Index: Çoklu etiket (array) bazlı esnek filtrelemeler (["okul-bölgesi", "yoğun-trafik"]) için kullanılmıştır.
+
+Koleksiyon Bazlı İndeks Dağılımları
+traffic_sensors (5 İndeks): Zaman serisi takibi, 90 günlük TTL ve hız ihlallerine özel Partial Index.
+
+air_quality_sensors (6 İndeks): Sıcaklık, nem ve PM2.5 değerlerinin zaman damgasıyla bileşik indekslenmesi, 1 yıllık TTL ve yüksek AQI durumları için Partial Index.
+
+energy_sensors (6 İndeks): Tüketim tipleri, bina türleri ve pik saatlere özel analizleri hızlandıran indeksler ve 2 yıllık TTL.
+
+sensor_metadata (6 İndeks): Cihazların tekilliğini (Unique) sağlayan, coğrafi konumlarını (2dsphere) tutan ve ilçe/tip kırılımlarını hızlandıran yapı.
+
+alerts (5 İndeks): Sistem uyarılarının aciliyetine ve durumuna göre (aktif/onaylanmış) hızlıca filtrelenmesini sağlayan operasyonel indeksler.
+
+4. Test Verisi (Seeding) ve Veri Modeli
+İstanbul'un Kadıköy, Beşiktaş, Şişli, Fatih gibi 18 stratejik ilçesinde simüle edilen sensörler üzerinden gerçekçi bir veri havuzu oluşturulmuştur.
+
+Her bir veri kategorisi (Trafik, Hava Kalitesi, Enerji) için 6'şar sensör tanımlanmıştır.
+
+Her sensör, 7 günlük periyotta saatlik frekansta veri üreterek sensör başına 168 kayıt oluşturmaktadır.
+
+Metadata ve oluşturulan alarmlarla birlikte sistemde toplamda ~3.078 adet organik davranışa sahip (sabah/akşam trafik yoğunluğu, bina tipine göre değişen enerji tüketimi) test kaydı bulunmaktadır.
+
+5. Gelişmiş Sorgu Senaryoları (Query Categories)
+Veritabanının esnekliği ve gücü, 6 farklı kategoride hazırlanan sorgu senaryoları ile test edilmiştir:
+
+Temel Sorgular: Aktif sensörlerin listelenmesi, belirli bir sensörden son N ölçümün çekilmesi ve eşik değeri aşan (örn: AQI > 100) kayıtların filtrelenmesi.
+
+Aggregation Pipeline: Veri dönüştürme ve analitik süreçleri.
+
+24 saatlik trafik yoğunluğu profili çıkarma.
+
+$lookup operatörü kullanılarak koleksiyonlar arası (cross-collection) ilişki kurma (Örn: İlçe bazında hava kalitesi).
+
+GeoSpatial (Mekansal) Sorgular: Coğrafi analiz yetenekleri.
+
+$geoNear ile mesafe hesaplaması yapılarak belirli bir noktaya en yakın sensörlerin bulunması.
+
+$geoWithin ve $centerSphere kombinasyonu ile belirli bir yarıçap (Örn: Kadıköy merkezli 3km) içindeki cihazların taranması.
+
+Zaman Serisi Analizi (Time Series): MongoDB'nin analitik pencere fonksiyonlarının kullanımı.
+
+$setWindowFields kullanılarak PM2.5 değerleri için hareketli ortalama (moving average) hesaplamaları.
+
+Trend analizleri ve hafta içi/hafta sonu enerji tüketim kıyaslamaları.
+
+Alarm Analizi: Cihazların ürettiği uyarıların türlerine ve kritiklik seviyelerine (severity) göre gruplanması ve lookup ile sensör detaylarıyla birleştirilmesi.
+
+Performans Analizi: Yazılan sorguların verimliliğini doğrulamak adına explain('executionStats') komutu kullanılarak planlanan indekslerin (Index Scan vs Collection Scan) gerçekten kullanılıp kullanılmadığının teyidi.
+
+6. Kurulum ve Çalıştırma Yönergeleri
+Proje, modern DevOps pratiklerine uygun olarak tek komutla ayağa kalkacak şekilde tasarlanmıştır.
+
+Altyapı: docker-compose up -d komutu ile MongoDB sunucusu ve Mongo Express (port 8081) arayüzü başlatılır.
+
+Proje Başlatma: Proje dizininde npm install sonrasında npm run all komutu ile sırasıyla veritabanı şemaları oluşturulur (setup), test verileri basılır (seed) ve performans doğrulama sorguları (queries) çalıştırılır.
+
+Sonuç
+Bu veritabanı tasarımı, basit bir CRUD uygulamasının ötesine geçerek; büyük veri (Big Data) işleme, coğrafi bilgi sistemleri (GIS) entegrasyonu, zaman serisi veri analitiği ve proaktif disk optimizasyonu gibi ileri seviye veritabanı mühendisliği konseptlerini başarıyla uygulamaktadır. Seçilen indeks tipleri ve aggregation stratejileri, sistemin gelecekteki yatay ve dikey ölçeklenmesine (scalability) tam uyumludur.
