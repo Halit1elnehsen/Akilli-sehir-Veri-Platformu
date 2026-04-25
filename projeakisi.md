@@ -1,4 +1,4 @@
-250541617 Halid Elnehsen
+[consumer.js](https://github.com/user-attachments/files/27081332/consumer.js)250541617 Halid Elnehsen
 # Akıllı Şehir Veri Platformu - Proje Akış Dosyası
 
 ## 📅 1. Hafta: Planlama ve Altyapı Araştırması (Teslim: 12 Mart 2026)
@@ -1016,3 +1016,33 @@ Proje Başlatma: Proje dizininde npm install sonrasında npm run all komutu ile 
 
 Sonuç
 Bu veritabanı tasarımı, basit bir CRUD uygulamasının ötesine geçerek; büyük veri (Big Data) işleme, coğrafi bilgi sistemleri (GIS) entegrasyonu, zaman serisi veri analitiği ve proaktif disk optimizasyonu gibi ileri seviye veritabanı mühendisliği konseptlerini başarıyla uygulamaktadır. Seçilen indeks tipleri ve aggregation stratejileri, sistemin gelecekteki yatay ve dikey ölçeklenmesine (scalability) tam uyumludur.
+
+📁 hafta-4-halid/
+├── 📄 consumer.js (Kodun)
+├── 📄 package.json (Kimlik Kartın)
+└── 🖼️ terminal-kanit.png (Ekran Görüntün)
+[U[package.json](https://github.com/user-attachments/files/27081333/package.json)
+[package-lock.json](https://github.com/user-attachments/files/27081334/package-lock.json)
+ploading consumer.js…]()
+📝 4. Hafta: Kafka - MongoDB Veri Boru Hattı (Consumer)
+Bu haftaki görevimde, akıllı şehir projesinin sinir sistemini oluşturan "Consumer" (Tüketici) servisini geliştirdim. Bu servis, Furkan'ın Kafka üzerinden gönderdiği anlık trafik verilerini yakalayıp, Eren'in MongoDB veritabanına düzenli bir şekilde kaydetmektedir.
+
+Neler Yaptım?
+
+Node.js Entegrasyonu: Projeyi Node.js ortamında ayağa kaldırarak kafkajs ve mongodb kütüphanelerini entegre ettim.
+
+Bağlantı Köprüsü: Kafka üzerindeki city.sensors.traffic konusuna (topic) abone olan ve gelen her mesajı anlık olarak yakalayan algoritmayı yazdım.
+
+Veri İşleme: Gelen karmaşık verileri JSON formatına dönüştürüp MongoDB koleksiyonuna insertOne komutuyla güvenli bir şekilde aktardım.
+
+Hata Yönetimi: Veritabanı veya mesaj kuyruğu erişilemez olduğunda sistemin çökmemesi için gerekli hata yakalama (try-catch) bloklarını ekledim.
+
+Dosya İçerikleri:
+
+consumer.js: Sistemin ana çalışma kodları.
+
+package.json: Proje bağımlılıkları ve kullanılan teknolojilerin listesi.
+
+terminal-kanit.png: Servisin çalıştırıldığını ve bağlantı testlerinin yapıldığını gösteren terminal çıktısı.
+
+
