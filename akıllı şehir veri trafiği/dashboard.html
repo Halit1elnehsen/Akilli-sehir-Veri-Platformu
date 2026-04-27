@@ -1,0 +1,350 @@
+
+<h2 class="sr-only">Enerji tüketimi görselleştirme dashboard'u - gerçek zamanlı simülasyon, zaman aralığı filtresi, alarm sistemi ve tüm istatistikler</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.dash{padding:1.5rem 0}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.logo{width:32px;height:32px;border-radius:8px;background:#1D9E75;display:flex;align-items:center;justify-content:center}
+.logo svg{width:18px;height:18px;fill:#fff}
+.title-block h1{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.title-block p{font-size:12px;color:var(--color-text-secondary)}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-success);background:var(--color-background-success);padding:4px 10px;border-radius:20px;border:0.5px solid var(--color-border-success)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.range-bar{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.range-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.range-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;position:relative;overflow:hidden}
+.card-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.card-value{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.card-sub{font-size:11px;color:var(--color-text-secondary);margin-top:5px}
+.card-delta{font-size:11px;margin-top:4px}
+.card-delta.up{color:var(--color-text-danger)}
+.card-delta.down{color:var(--color-text-success)}
+.card-accent{position:absolute;top:0;right:0;width:3px;height:100%;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.2rem}
+.chart-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.chart-box.full{grid-column:1/-1}
+.chart-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--color-text-secondary);margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary)}
+.legend-dot{width:10px;height:10px;border-radius:2px}
+.alarm-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:1.2rem}
+.alarm-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.alarm-list{display:flex;flex-direction:column;gap:6px}
+.alarm-item{display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 10px;border-radius:6px}
+.alarm-item.critical{background:var(--color-background-danger);color:var(--color-text-danger);border:0.5px solid var(--color-border-danger)}
+.alarm-item.warning{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
+.alarm-item.ok{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
+.alarm-icon{font-size:14px;flex-shrink:0}
+.alarm-text{flex:1}
+.alarm-time{font-size:10px;opacity:.7}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.table-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.sensor-table{width:100%;font-size:12px;border-collapse:collapse}
+.sensor-table th{text-align:left;color:var(--color-text-secondary);font-weight:400;padding:4px 6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sensor-table td{padding:6px 6px;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.sensor-table tr:last-child td{border:none}
+.status-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px}
+.status-ok{background:var(--color-background-success);color:var(--color-text-success)}
+.status-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.status-crit{background:var(--color-background-danger);color:var(--color-text-danger)}
+@media(max-width:520px){.charts-row{grid-template-columns:1fr}.bottom-row{grid-template-columns:1fr}}
+</style>
+
+<div class="dash">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M13 2L4.09 12.26c-.4.5-.6.75-.59 1 0 .2.09.4.23.53.16.14.4.21.87.21H11l-2 8 8.91-10.26c.4-.5.6-.75.59-1 0-.2-.09-.4-.23-.53-.16-.14-.4-.21-.87-.21H13l2-8z"/></svg>
+      </div>
+      <div class="title-block">
+        <h1>Enerji Tüketimi Dashboard</h1>
+        <p>Sensör entegrasyonu — Grafana benzeri görselleştirme</p>
+      </div>
+    </div>
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      Canlı
+    </div>
+  </div>
+
+  <div class="range-bar" id="rangeBar">
+    <button class="range-btn" onclick="setRange('1s')">Son 1s</button>
+    <button class="range-btn active" onclick="setRange('6s')">Son 6s</button>
+    <button class="range-btn" onclick="setRange('1g')">Son 1g</button>
+    <button class="range-btn" onclick="setRange('7g')">Son 7g</button>
+    <button class="range-btn" onclick="setRange('30g')">Son 30g</button>
+  </div>
+
+  <div class="cards" id="metricCards">
+    <div class="card"><div class="card-accent" style="background:#1D9E75"></div><div class="card-label">Anlık Güç</div><div class="card-value" id="c-power">—</div><div class="card-sub">kW</div><div class="card-delta" id="c-power-d"></div></div>
+    <div class="card"><div class="card-accent" style="background:#378ADD"></div><div class="card-label">Bugünkü Tüketim</div><div class="card-value" id="c-today">—</div><div class="card-sub">kWh</div><div class="card-delta" id="c-today-d"></div></div>
+    <div class="card"><div class="card-accent" style="background:#BA7517"></div><div class="card-label">Maliyet (bugün)</div><div class="card-value" id="c-cost">—</div><div class="card-sub">₺</div><div class="card-delta" id="c-cost-d"></div></div>
+    <div class="card"><div class="card-accent" style="background:#E24B4A"></div><div class="card-label">Aktif Alarm</div><div class="card-value" id="c-alarm">—</div><div class="card-sub">adet</div><div class="card-delta" id="c-alarm-d"></div></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box full">
+      <div class="chart-title">Güç tüketimi zaman serisi</div>
+      <div class="chart-sub">kW — seçili zaman aralığı</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Üretim Hattı A</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#378ADD"></span>Üretim Hattı B</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#BA7517;border:1.5px dashed #BA7517;background:transparent"></span>Eşik</span>
+      </div>
+      <div style="position:relative;width:100%;height:200px"><canvas id="lineChart" role="img" aria-label="Güç tüketimi zaman serisi grafiği, iki üretim hattı karşılaştırması">Güç tüketimi zaman serisi verisi yükleniyor.</canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Tüketim dağılımı</div>
+      <div class="chart-sub">Bölüme göre yüzde</div>
+      <div style="position:relative;width:100%;height:180px"><canvas id="donutChart" role="img" aria-label="Bölüme göre enerji tüketim dağılımı pasta grafiği">Tüketim dağılımı verisi.</canvas></div>
+      <div class="legend" id="donutLegend" style="margin-top:8px;margin-bottom:0"></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Günlük tüketim trendi</div>
+      <div class="chart-sub">kWh — son 7 gün</div>
+      <div style="position:relative;width:100%;height:180px"><canvas id="barChart" role="img" aria-label="Son 7 günlük enerji tüketim bar grafiği">Günlük tüketim verisi.</canvas></div>
+    </div>
+  </div>
+
+  <div class="alarm-box">
+    <div class="alarm-title">Alarm & uyarı geçmişi</div>
+    <div class="alarm-list" id="alarmList"></div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="table-box">
+      <div class="chart-title" style="margin-bottom:10px">Sensör durumu</div>
+      <table class="sensor-table">
+        <thead><tr><th>Sensör</th><th>Son Değer</th><th>Durum</th></tr></thead>
+        <tbody id="sensorTable"></tbody>
+      </table>
+    </div>
+    <div class="chart-box" style="margin-bottom:0">
+      <div class="chart-title">Saatlik ortalama (bugün)</div>
+      <div class="chart-sub">kWh / saat</div>
+      <div style="position:relative;width:100%;height:180px"><canvas id="hourlyChart" role="img" aria-label="Bugünkü saatlik ortalama enerji tüketimi">Saatlik veri.</canvas></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const TARIFFS = 4.2;
+let currentRange = '6s';
+let lineChart, donutChart, barChart, hourlyChart;
+let tickCount = 0;
+
+function rnd(min,max){return Math.random()*(max-min)+min}
+function rndI(min,max){return Math.floor(rnd(min,max))}
+
+function generateTimeSeries(n, baseA, baseB, noise){
+  const a=[],b=[];
+  let vA=baseA, vB=baseB;
+  for(let i=0;i<n;i++){
+    vA = Math.max(10, vA + rnd(-noise, noise));
+    vB = Math.max(10, vB + rnd(-noise, noise));
+    a.push(Math.round(vA*10)/10);
+    b.push(Math.round(vB*10)/10);
+  }
+  return {a,b};
+}
+
+function generateLabels(n, range){
+  const labels=[];
+  const now = new Date();
+  if(range==='1s'){
+    for(let i=n-1;i>=0;i--){
+      const d=new Date(now-i*60000);
+      labels.push(d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'));
+    }
+  } else if(range==='6s'){
+    for(let i=n-1;i>=0;i--){
+      const d=new Date(now-i*360000);
+      labels.push(d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'));
+    }
+  } else if(range==='1g'){
+    for(let i=n-1;i>=0;i--){
+      const d=new Date(now-i*3600000);
+      labels.push(d.getHours()+'h');
+    }
+  } else if(range==='7g'){
+    const days=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+    for(let i=n-1;i>=0;i--){
+      const d=new Date(now-i*86400000);
+      labels.push(days[d.getDay()]);
+    }
+  } else {
+    for(let i=n-1;i>=0;i--){
+      const d=new Date(now-i*86400000);
+      labels.push((d.getMonth()+1)+'/'+(d.getDate()));
+    }
+  }
+  return labels;
+}
+
+function getConfig(range){
+  if(range==='1s') return {n:60,baseA:82,baseB:65,noise:5};
+  if(range==='6s') return {n:36,baseA:85,baseB:68,noise:8};
+  if(range==='1g') return {n:24,baseA:90,baseB:72,noise:12};
+  if(range==='7g') return {n:7,baseA:95,baseB:75,noise:15};
+  return {n:30,baseA:88,baseB:70,noise:18};
+}
+
+function initLineChart(){
+  const cfg = getConfig(currentRange);
+  const {a,b} = generateTimeSeries(cfg.n, cfg.baseA, cfg.baseB, cfg.noise);
+  const labels = generateLabels(cfg.n, currentRange);
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  if(lineChart) lineChart.destroy();
+  lineChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Hat A',data:a,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,.08)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:'Hat B',data:b,borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,.06)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:'Eşik',data:Array(cfg.n).fill(110),borderColor:'#BA7517',borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{
+        x:{ticks:{font:{size:10},color:'#888',maxTicksLimit:8},grid:{color:'rgba(128,128,128,.08)'}},
+        y:{ticks:{font:{size:10},color:'#888',callback:v=>v+'kW'},grid:{color:'rgba(128,128,128,.1)'}}
+      },
+      interaction:{mode:'nearest',axis:'x',intersect:false}
+    }
+  });
+}
+
+function initDonutChart(){
+  const data=[38,24,18,12,8];
+  const labels=['Üretim','HVAC','Aydınlatma','Ofis','Diğer'];
+  const colors=['#1D9E75','#378ADD','#BA7517','#D4537E','#888780'];
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if(donutChart) donutChart.destroy();
+  donutChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'transparent',hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}}}
+  });
+  const leg = document.getElementById('donutLegend');
+  leg.innerHTML = labels.map((l,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} ${data[i]}%</span>`).join('');
+}
+
+function initBarChart(){
+  const days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+  const vals = days.map(()=>rndI(280,480));
+  const ctx = document.getElementById('barChart').getContext('2d');
+  if(barChart) barChart.destroy();
+  barChart = new Chart(ctx,{
+    type:'bar',
+    data:{labels:days,datasets:[{label:'kWh',data:vals,backgroundColor:'rgba(55,138,221,.7)',borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:10},color:'#888'},grid:{color:'rgba(128,128,128,.1)'}}}}
+  });
+}
+
+function initHourlyChart(){
+  const hours=Array.from({length:24},(_,i)=>i+'h');
+  const vals=hours.map((_,i)=>{
+    const h=i;
+    const base = h<6?15:h<9?45:h<18?72:h<22?55:20;
+    return Math.round(base+rnd(-8,8));
+  });
+  const ctx=document.getElementById('hourlyChart').getContext('2d');
+  if(hourlyChart) hourlyChart.destroy();
+  hourlyChart = new Chart(ctx,{
+    type:'bar',
+    data:{labels:hours,datasets:[{label:'kWh',data:vals,backgroundColor:vals.map(v=>v>65?'rgba(226,75,74,.7)':v>50?'rgba(186,117,23,.7)':'rgba(29,158,117,.65)'),borderRadius:3,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9},color:'#888',maxTicksLimit:12},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(128,128,128,.1)'}}}}
+  });
+}
+
+function updateMetrics(){
+  const power = (rnd(75,120)).toFixed(1);
+  const today = (rnd(320,480)).toFixed(0);
+  const cost = (today * TARIFFS).toFixed(0);
+  const alarmCount = rndI(0,4);
+
+  document.getElementById('c-power').textContent = power;
+  document.getElementById('c-today').textContent = today;
+  document.getElementById('c-cost').textContent = parseInt(cost).toLocaleString('tr-TR');
+  document.getElementById('c-alarm').textContent = alarmCount;
+
+  const pd = rnd(-5,8);
+  document.getElementById('c-power-d').textContent = (pd>0?'+':'')+pd.toFixed(1)+'% önceki saate göre';
+  document.getElementById('c-power-d').className = 'card-delta '+(pd>0?'up':'down');
+  document.getElementById('c-today-d').textContent = 'Bugün';
+  document.getElementById('c-cost-d').textContent = '₺'+TARIFFS+'/kWh birim fiyat';
+  document.getElementById('c-alarm-d').className = 'card-delta '+(alarmCount>0?'up':'down');
+  document.getElementById('c-alarm-d').textContent = alarmCount>0?'Dikkat gerekiyor':'Tümü normal';
+}
+
+function updateAlarms(){
+  const alarms=[
+    {type:'critical',icon:'!',text:'Hat A güç tüketimi eşiği aştı — 118.4 kW (eşik: 110 kW)',time:'12:42'},
+    {type:'warning',icon:'!',text:'Sensör S-04 bağlantı gecikmesi tespit edildi',time:'12:38'},
+    {type:'ok',icon:'✓',text:'Hat B normal aralığa döndü',time:'12:31'},
+    {type:'warning',icon:'!',text:'Gece tarifesi sona eriyor, pik saate 18 dk kaldı',time:'12:20'},
+    {type:'ok',icon:'✓',text:'Günlük bakım tamamlandı, tüm sensörler aktif',time:'11:55'},
+  ];
+  document.getElementById('alarmList').innerHTML = alarms.map(a=>`
+    <div class="alarm-item ${a.type}">
+      <span class="alarm-icon">${a.icon}</span>
+      <span class="alarm-text">${a.text}</span>
+      <span class="alarm-time">${a.time}</span>
+    </div>`).join('');
+}
+
+function updateSensors(){
+  const sensors=[
+    {name:'S-01 / Hat A Giriş',val:(rnd(80,120)).toFixed(1)+' kW',status:'ok'},
+    {name:'S-02 / Hat B Giriş',val:(rnd(60,90)).toFixed(1)+' kW',status:'ok'},
+    {name:'S-03 / HVAC',val:(rnd(20,40)).toFixed(1)+' kW',status:'ok'},
+    {name:'S-04 / Aydınlatma',val:(rnd(10,20)).toFixed(1)+' kW',status:'warn'},
+    {name:'S-05 / Jeneratör',val:'BEKLEME',status:'ok'},
+    {name:'S-06 / Solar Panel',val:(rnd(5,18)).toFixed(1)+' kW',status:'ok'},
+  ];
+  document.getElementById('sensorTable').innerHTML = sensors.map(s=>`
+    <tr>
+      <td>${s.name}</td>
+      <td>${s.val}</td>
+      <td><span class="status-pill status-${s.status}">${s.status==='ok'?'Normal':s.status==='warn'?'Uyarı':'Kritik'}</span></td>
+    </tr>`).join('');
+}
+
+function setRange(r){
+  currentRange = r;
+  document.querySelectorAll('.range-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.includes(
+      r==='1s'?'1s':r==='6s'?'6s':r==='1g'?'1g':r==='7g'?'7g':'30g'
+    ));
+  });
+  initLineChart();
+}
+
+function fullRefresh(){
+  updateMetrics();
+  updateAlarms();
+  updateSensors();
+  tickCount++;
+  if(tickCount % 6 === 0) initLineChart();
+}
+
+initLineChart();
+initDonutChart();
+initBarChart();
+initHourlyChart();
+updateMetrics();
+updateAlarms();
+updateSensors();
+setInterval(fullRefresh, 3000);
+</script>

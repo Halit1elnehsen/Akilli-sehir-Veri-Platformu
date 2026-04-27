@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'Enerji Takip'
+    orgId: 1
+    folder: 'Enerji Tüketimi'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboard_json

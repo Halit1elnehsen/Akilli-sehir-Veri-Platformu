@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB_Enerji
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: enerji_org
+      defaultBucket: enerji_bucket
+    secureJsonData:
+      token: enerji-super-secret-token
+    editable: true
