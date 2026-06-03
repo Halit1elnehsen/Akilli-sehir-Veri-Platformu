@@ -37,7 +37,7 @@ Bu hafta, Akıllı Şehir (Smart City) veri platformu projesinin geliştirme ort
 * Hassas bilgiler (veritabanı şifresi, port numaraları) `.env` dosyasına taşındı.
 * `.env` dosyası `.gitignore` ile versiyon kontrolünden dışlandı.
 * Servisler bağımsız konteynerler olarak çalıştığından yatay ölçeklendirmeye uygundur.
- 
+ ---
  ### 📁 Proje Yapısı
 smart-city-platform/
  ├── docker-compose.yml
