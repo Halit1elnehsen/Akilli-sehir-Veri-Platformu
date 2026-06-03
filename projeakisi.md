@@ -51,7 +51,85 @@ smart-city-platform/
 ### 🔍 Sonuç
 Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, Node.js API) Docker Compose aracılığıyla ayağa kaldırılabilmektedir. Ortam; güvenli (.env kullanımı), taşınabilir (Docker tabanlı) ve ölçeklenebilir (konteyner mimarisi) biçimde tasarlanmıştır.
 
+<summary>👉 👤Efe kaan Durmaz : </summary>
+
+### GÖREV AÇIKLAMASI
+Bu hafta, sistem mimarisinin doğru temeller üzerine kurulabilmesi amacıyla detaylı analiz, gereksinim toplama
+ve resmi teknik belgelendirme süreçleri gerçekleştirilmiştir. Görevin temel amacı; projenin ilerleyen
+safhalarında geliştirilecek olan modüllerin işlevsel sınırlarını çizmek, paydaş beklentilerini teknik çıktılara
+dönüştürmek ve yazılım geliştirme döngüsünün kusursuz ilerlemesini sağlayacak analiz dökümanını
+oluşturmaktır.
+
+ ### YAPILAN İŞLEMLER
+1. Paydaş Görüşmeleri ve Beklenti Analizi
+Projenin tüm ana paydaşları ve hedef kullanıcı kitleleriyle görüşülerek sistemden beklenen işlevsel
+çözümler ve performans kriterleri derinlemesine analiz edildi.
+2. Fonksiyonel Gereksinimlerin Belirlenmesi
+Sistemin yapması gereken tüm temel operasyonlar ve işlevsel özellikler maddeler halinde listelenerek
+projenin fonksiyonel gereksinim sınırları kesinleştirildi.
+3. Fonksiyonel Olmayan (Non-Functional) Gereksinim Analizi
+Sistemin güvenliği, veri gizliliği standartları, yatayda büyüme kapasitesi, eş zamanlı istek karşılama
+performansı ve yüksek ölçeklenebilirlik kriterleri somut teknik metriklerle tanımlandı.
+4. Kullanıcı Hikayelerinin (User Stories) Yazılması
+Toplanan tüm gereksinim verileri, yazılım ve test ekiplerinin Scrum/Agile süreçlerinde rahatça takip
+edebileceği pratik, anlaşılır ve puanlanabilir kullanıcı hikayelerine dönüştürüldü.
+5. Kullanım Durumlarının (Use Cases) ve Senaryoların Tasarlanması
+Sistemin aktörlerle olan etkileşimini, uçtan uca nasıl davranacağını ve istisnai durum senaryolarını içeren
+kapsamlı kullanım durumları modellenerek ilk resmi teknik dokümantasyon tamamlandı.
+
+### KULLANILAN TEKNOLOJILER
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Araç / Yöntem</th>
+      <th>Kapsam</th>
+      <th>Açıklama</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Gereksinim Analizi</strong></td>
+      <td>Sistem Sınırları</td>
+      <td>Fonksiyonel ve Fonksiyonel Olmayan (Performans, Güvenlik) kriterlerin tespiti.</td>
+    </tr>
+    <tr>
+      <td><strong>User Stories &amp; Use Case</strong></td>
+      <td>Modelleme</td>
+      <td>Kullanıcı senaryolarının ve aktör etkileşimlerinin teknik dokümantasyonu.</td>
+    </tr>
+    <tr>
+      <td><strong>Enterprise Architect / Draw.io</strong></td>
+      <td>Görselleştirme</td>
+      <td>Kullanım durumu diyagramlarının ve iş akış şemalarının çizimi.</td>
+    </tr>
+  </tbody>
+</table>
+
+### PROJE YAPISI
+smart-city-platform/
+└── docs/
+ └── requirements/
+ ├── functional_requirements.md
+ ├── non_functional_requirements.md
+ ├── user_stories.json
+ └── use_case_specifications.pdf
+ 
+ ### SONUÇ
+Projenin 1. haftası itibarıyla, Efe Kaan Durmaz sorumluluğundaki teknik gereksinim toplama ve belgeleme
+süreci başarıyla tamamlanmıştır. Hazırlanan bu mimari ve analiz temeli, projenin sonraki safhalarında
+kodlanacak olan tüm mikroservis ve modüller için bağlayıcı ve yol gösterici bir kılavuz niteliğindedir. 
+
+
 </details>
+
 ---
 
 ## 2.Hafta(3-10 Nisan)
