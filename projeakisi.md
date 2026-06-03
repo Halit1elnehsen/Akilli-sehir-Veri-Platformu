@@ -54,7 +54,7 @@ Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, N
 </details>
 ---
 
-### 2.Hafta(3-10 Nisan)
+## 2.Hafta(3-10 Nisan)
 <details>
 <summary>👉 👤Mustafa Alp : Veritabanı Seçimi ve Veri Modeli Tasarımı </summary>
  
@@ -196,9 +196,40 @@ Bu hafta, Akıllı Şehir (Smart City) veri platformu için şehirdeki trafik ve
 ### 1. API Endpoint Tasarımı
 Trafik verisi döndürmek üzere aşağıdaki endpoint'ler tasarlanmış ve geliştirilmiştir:
 Method	Endpoint	Açıklama
-GET	/api/v1/traffic	Tüm trafik verilerini listele
-GET	/api/v1/traffic/:district	Belirli bir bölgenin trafik yoğunluğu ve ortalama hızı
-GET	/api/v1/traffic/:district/summary	Bölge özet istatistikleri
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Endpoint</th>
+      <th>Açıklama</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/traffic</td>
+      <td>Tüm trafik verilerini listele</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/traffic/:district</td>
+      <td>Belirli bir bölgenin trafik yoğunluğu ve ortalama hızı</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/traffic/:district/summary</td>
+      <td>Bölge özet istatistikleri</td>
+    </tr>
+  </tbody>
+</table>
 
 
 
