@@ -53,7 +53,7 @@ Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, N
 </details>
 
 <details>
-<summary>👉 👤Efe kaan Durmaz : </summary>
+<summary>👉 👤Efe kaan Durmaz : Gereksinim Toplama Ve Belgeleme </summary>
 
 ### GÖREV AÇIKLAMASI
 Bu hafta, sistem mimarisinin doğru temeller üzerine kurulabilmesi amacıyla detaylı analiz, gereksinim toplama
@@ -262,6 +262,85 @@ sensors koleksiyonunda district alanı ile ilçe bağlantısı kurulur.
 ### 🔍 Sonuç
 Akıllı Şehir platformu için MongoDB döküman tabanlı veritabanı seçilmiştir. Tasarlanan veri modeli; sensör yönetimi, gerçek zamanlı ölçüm verisi, bölgesel bilgiler ve uyarı sistemi olmak üzere 4 ana koleksiyondan oluşmaktadır. Coğrafi indeksleme (2dsphere), TTL indeksleri ve bileşik indeks stratejileriyle hem sorgu performansı hem de depolama verimliliği optimize edilmiştir.
 </details>
+
+<details>
+ 
+<summary>👉 👤Efe Kaan Durmaz : Bulut Platformu Seçimi Ve Maliyet Analizi </summary>
+
+### GÖREV AÇIKLAMASI
+Bu hafta, Akıllı Şehir platformunun üretim ortamında (production) kesintisiz ve yüksek performansla
+çalışabilmesi amacıyla bulut platformu mimari tasarımı, stratejik seçimi ve kapsamlı maliyet projeksiyonu
+çalışmaları yürütülmüştür. Görevin amacı; projenin veri hacmi büyüme hızını simüle ederek en az maliyetle en
+yüksek sürekliliği ve veri güvenliğini sunacak küresel bulut sağlayıcısını teknik metriklerle saptamaktır.
+
+### YAPILAN İŞLEMLER
+1. Küresel Bulut Sağlayıcılarının (AWS, Azure, GCP) Teknik İncelemesi
+Sektör standardı bulut devleri olan Amazon Web Services (AWS), Microsoft Azure ve Google Cloud
+Platform (GCP) servis havuzları; veri depolama, yüksek işlem gücü (compute) ve analitik araç çözümleri
+özelinde incelendi.
+2. Ölçeklenebilirlik ve Sürdürülebilirlik Metriklerinin Kıyaslanması
+Sistem mimarisinin gelecekteki büyüme potansiyeline uygun olarak platformların yatay ve dikey otomatik
+ölçeklenme yetenekleri, veri güvenliği standartları ve entegrasyon kolaylıkları karşılaştırıldı.
+3. Üç Kademeli Veri Hacmi Senaryolarının Kurgulanması
+Olası veri yüklerini simüle etmek amacıyla platformun gelişim evrelerini temsil eden düşük, orta ve yüksek
+veri hacimlerine sahip 3 farklı yük modeli ve veri akış senaryosu kurgulandı.
+4. TCO (Toplam Sahip Olma Maliyeti) Analizi ve Raporlama
+Kurgulanan yük senaryoları bulut sağlayıcılarının resmi fiyatlandırma araçları üzerinden taranarak aylık/
+yıllık bütçe projeksiyonları çıkarıldı ve şirkete uzun vadede en yüksek maliyet avantajı sağlayacak ideal
+bulut mimarisi raporlandı.
+
+### KULLANILAN TEKNOLOJILER
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Araç / Servis</th>
+      <th>Kapsam</th>
+      <th>Açıklama</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>AWS / Azure / GCP Tools</strong></td>
+      <td>Maliyet Projeksiyonu</td>
+      <td>Bulut servislerinin altyapı ve operasyonel bütçelendirme hesaplamaları.</td>
+    </tr>
+    <tr>
+      <td><strong>TCO Calculators</strong></td>
+      <td>Mali Analiz</td>
+      <td>Düşük, orta ve yüksek veri hacmi senaryolarının finansal kıyaslanması.</td>
+    </tr>
+    <tr>
+      <td><strong>Lucidchart</strong></td>
+      <td>Topoloji Tasarımı</td>
+      <td>Önerilen bulut altyapı mimarisinin görselleştirilmesi.</td>
+    </tr>
+  </tbody>
+</table>
+
+### PROJE YAPISI
+smart-city-platform/
+└── docs/
+ └── architecture/
+ ├── cloud-comparison-matrix.xlsx
+ ├── cloud-cost-analysis-report.md
+ └── infrastructure-topology.
+ 
+ ### SONUÇ
+2. hafta çalışmaları kapsamında, projenin canlı altyapı omurgasını oluşturacak bulut sağlayıcısı seçimi teknik
+ve mali gerekçelere dayandırılarak tamamlanmıştır. Düşük, orta ve yüksek yük senaryolarına özel olarak
+hazırlanan bütçe projeksiyonu sayesinde, projenin büyüme aşamalarında karşılaşılacak maliyetler önceden
+öngörülebilir kılınmıştır. 
+
+</details>
+
 
 ---
 
@@ -482,11 +561,81 @@ api/
 
 ### 🔍 Sonuç
 Trafik verisi sunan temel REST API endpoint'i başarıyla geliştirilmiştir. API; bölge bazlı trafik yoğunluğu ve ortalama hız verisi döndürmekte, API Key ile güvenlik altına alınmakta ve entegrasyon testleriyle doğrulanmış durumdadır. Dokümantasyon tamamlanmış olup API dış uygulamalarla entegrasyona hazır haldedir.
-
-
-
-
  
 </details>
+
+<details>
+<summary>👉 👤Efe Kaan Durmaz : Apı Gateway Tasarımı  </summary>
+ 
+ ### GÖREV AÇIKLAMASI
+Bu hafta, Akıllı Şehir Veri Platformu'nun tüm dış dünya entegrasyonlarını, mobil uygulamalarını, web
+portallarını ve harici şehir alt sistemlerini merkezi bir noktadan yönetecek güvenli bir API Gateway mimari
+katmanının tasarımı gerçekleştirilmiştir. Görevin amacı; arka plandaki mikroservisleri siber tehditlerden izole
+eden, trafiği akıllıca dağıtan ve tek bir giriş kapısı sunan bir altyapı planlamaktır.
+
+ ### YAPILAN İŞLEMLER
+1. Trafik Yönlendirme ve Akıllı İstek Yönetimi
+Dış dünyadan gelen tüm taleplerin, URL yapılarına ve rotalarına göre arkadaki ilgili mikroservislere
+performanslı bir şekilde yönlendirilmesini sağlayan mimari kurallar tanımlandı.
+2. Merkezi API Kimlik Doğrulama ve Yetkilendirme
+Sistem güvenliğini uç noktada sağlamak üzere OAuth2 ve JWT (JSON Web Token) protokolleri kullanılarak
+API anahtarlarının doğrulanması ve rol tabanlı erişim kontrolü (RBAC) kuralları gateway seviyesine çekildi.
+3. Rate Limiting (Hız Sınırlama) Altyapısının Kurulması
+Platformun aşırı yük altında çökmesini engellemek ve DDoS/Brute Force gibi kötü niyetli siber saldırılardan
+korunmak adına istemci ve IP bazlı hız sınırlama mekanizmaları planlandı.
+4. Geçit Teknolojileri ve İletişim Protokollerinin Kıyaslanması
+Tasarım dökümanında Kong Enterprise, Tyk ve AWS API Gateway araçları avantajlarıyla analiz edildi;
+senkron hızlı haberleşmeler için REST, esnek istemci sorguları için ise GraphQL mimari standartları
+detaylandırıldı.
+
+### KULLANILAN TEKNOLOJILER 
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Bileşen</th>
+      <th>Standart / Çözüm</th>
+      <th>Tasarım Amacı</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Kong</strong> / <strong>Tyk</strong> / <strong>AWS</strong></td>
+      <td>Gateway Altyapısı</td>
+      <td>Yüksek performanslı reverse proxy, akıllı istek yönlendirme ve yük dengeleme.</td>
+    </tr>
+    <tr>
+      <td><strong>JWT &amp; OAuth 2.0</strong></td>
+      <td>Güvenlik Protokolü</td>
+      <td>Merkezi kimlik doğrulama ve rol tabanlı (RBAC) erişim yetkilendirmesi.</td>
+    </tr>
+    <tr>
+      <td><strong>REST</strong> / <strong>GraphQL</strong></td>
+      <td>Mimari Standartlar</td>
+      <td>Farklı istemci türlerine ve veri tüketim modellerine uygun esnek entegrasyon.</td>
+    </tr>
+  </tbody>
+</table>
+
+### PROJE YAPISI
+smart-city-platform/
+└── docs/
+ └── api-gateway/
+ ├── routing-rules.json
+ ├── security-policy.md
+ └── gateway-architecture-spec.pdf
+ 
+ ### SONUÇ
+3. hafta çalışmalarıyla birlikte, Akıllı Şehir Veri Platformu'nun dış dünyayla temas kuracağı ana giriş kapısının
+(API Gateway) mimari tasarımı eksiksiz tamamlanmıştır. Hazırlanan tasarım; arka plandaki mikroservis
+karmaşıklığını gizleyen, güvenliği en dış sınırda sağlayan ve yüksek trafik altında akıllı yönlendirme yapabilen
+esnek bir yönetim kalkanı sunmaktadır. 
 
 
