@@ -54,13 +54,13 @@ Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, N
 </details>
 ---
 
-## 2.Hafta(3-10 Nisan)
+### 2.Hafta(3-10 Nisan)
 <details>
 <summary>👉 👤Mustafa Alp : Veritabanı Seçimi ve Veri Modeli Tasarımı </summary>
  
-## 📋 Görev Açıklaması
+### 📋 Görev Açıklaması
 Bu hafta, Akıllı Şehir (Smart City) veri platformu projesi için uygun NoSQL veritabanı teknolojisinin seçilmesi ve veri modelinin tasarlanması gerçekleştirilmiştir. Başlıca NoSQL çözümleri karşılaştırılmış; veri hacmi, sorgulama karmaşıklığı, ölçeklenebilirlik ve performans kriterleri değerlendirilerek en uygun veritabanı belirlenmiştir.
-## 🔍 NoSQL Veritabanı Karşılaştırması
+### 🔍 NoSQL Veritabanı Karşılaştırması
 <table>
   <tr>
     <th>Veritabanı</th>
@@ -92,6 +92,118 @@ Bu hafta, Akıllı Şehir (Smart City) veri platformu projesi için uygun NoSQL 
   </tr>
 </table>
 
+### ✅ Seçilen Veritabanı: MongoDB
+Aşağıdaki kriterler doğrultusunda MongoDB seçilmiştir:
+•	Esnek Şema: Farklı şehir bileşenlerinden gelen heterojen veriler (trafik, hava kalitesi, enerji tüketimi vb.) esnek döküman yapısıyla kolayca modellenebilir.
+•	Güçlü Sorgulama: Coğrafi sorgular ($geoNear), filtreleme ve aggregation pipeline desteği şehir verisi analizine uygundur.
+•	Yatay Ölçeklenebilirlik: Sharding ile büyük veri hacimlerine ölçeklenebilir.
+•	Ekip Deneyimi: Ekip, MongoDB ile Node.js/Mongoose entegrasyonuna zaten hakimdir.
 
+### 🗂️ Veri Modeli Tasarımı
+### 1. sensors – Sensör Bilgileri
+{
+  "_id": "ObjectId",
+  "sensor_id": "string",
+  "type": "traffic | air_quality | energy | noise",
+  "location": { "type": "Point", "coordinates": [longitude, latitude] },
+  "district": "string",
+  "status": "active | inactive",
+  "installed_at": "ISODate"
+}
+### 2. sensor_data – Sensör Ölçüm Verileri
+{
+  "_id": "ObjectId",
+  "sensor_id": "string  (ref: sensors)",
+  "timestamp": "ISODate",
+  "value": "number",
+  "unit": "string",
+  "metadata": {}
+}
+### 3. districts – İlçe/Bölge Bilgileri
+{
+  "_id": "ObjectId",
+  "name": "string",
+  "boundary": { "type": "Polygon", "coordinates": [[...]] },
+  "population": "number",
+  "area_km2": "number"
+}
+### 4. alerts – Uyarı Kayıtları
+{
+  "_id": "ObjectId",
+  "sensor_id": "string",
+  "alert_type": "string",
+  "severity": "low | medium | high",
+  "message": "string",
+  "created_at": "ISODate",
+  "resolved": "boolean"
+}
+
+### 🔗 Veri İlişkileri
+sensors  ──(1:N)──  sensor_data
+sensors  ──(N:1)──  districts
+sensors  ──(1:N)──  alerts
+sensor_data.sensor_id → sensors._id referansı (Manuel referans)
+sensors koleksiyonunda district alanı ile ilçe bağlantısı kurulur.
+
+### ⚡ İndeks & Optimizasyon Stratejileri
+<table>
+  <tr>
+    <th>Koleksiyon</th>
+    <th>İndeks</th>
+    <th>Amaç</th>
+  </tr>
+  <tr>
+    <td>sensors</td>
+    <td>location (2dsphere)</td>
+    <td>Konum bazlı sorgular</td>
+  </tr>
+  <tr>
+    <td>sensor data</td>
+    <td>sensor id + timestamp (bileşik)</td>
+    <td>Zaman serisi sorguları</td>
+  </tr>
+  <tr>
+    <td>sensor data</td>
+    <td>timestamp (TTL – 90 gün)</td>
+    <td>Eski veriyi otomatik sil</td>
+  </tr>
+  <tr>
+    <td>alerts</td>
+    <td>severity + resolved</td>
+    <td>Aktif uyarı filtrelemesi</td>
+  </tr>
+  <tr>
+    <td>districts</td>
+    <td>boundary (2dsphere)</td>
+    <td>Bölge bazlı sorgular</td>
+  </tr>
+</table>
+
+### 🔍 Sonuç
+Akıllı Şehir platformu için MongoDB döküman tabanlı veritabanı seçilmiştir. Tasarlanan veri modeli; sensör yönetimi, gerçek zamanlı ölçüm verisi, bölgesel bilgiler ve uyarı sistemi olmak üzere 4 ana koleksiyondan oluşmaktadır. Coğrafi indeksleme (2dsphere), TTL indeksleri ve bileşik indeks stratejileriyle hem sorgu performansı hem de depolama verimliliği optimize edilmiştir.
+</details>
+
+---
+
+## 3. Hafta (13-20 Nisan)
+<details>
+<summary>👉 👤Mustafa Alp : Temel API Endpoint Geliştirme </summary>
+ 
+### 📋 Görev Açıklaması
+Bu hafta, Akıllı Şehir (Smart City) veri platformu için şehirdeki trafik verilerini dış uygulamalarla paylaşmaya yönelik temel bir REST API endpoint'i geliştirilmiştir. API; belirli bir bölgedeki trafik yoğunluğunu ve ortalama hızı döndürmekte, kimlik doğrulama mekanizması içermekte ve entegrasyon testleriyle doğrulanmaktadır.
+
+### ✅ Yapılan İşlemler
+### 1. API Endpoint Tasarımı
+Trafik verisi döndürmek üzere aşağıdaki endpoint'ler tasarlanmış ve geliştirilmiştir:
+Method	Endpoint	Açıklama
+GET	/api/v1/traffic	Tüm trafik verilerini listele
+GET	/api/v1/traffic/:district	Belirli bir bölgenin trafik yoğunluğu ve ortalama hızı
+GET	/api/v1/traffic/:district/summary	Bölge özet istatistikleri
+
+
+
+
+ 
+</details>
 
 
