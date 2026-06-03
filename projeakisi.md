@@ -231,6 +231,178 @@ Method	Endpoint	Açıklama
   </tbody>
 </table>
 
+### 2. Örnek API Yanıtı
+GET /api/v1/traffic/kadikoy
+{
+  "success": true,
+  "district": "kadikoy",
+  "data": {
+    "congestion_level": "high",
+    "average_speed_kmh": 18.4,
+    "sensor_count": 12,
+    "last_updated": "2025-03-10T14:32:00Z"
+  }
+}
+### 3. Kimlik Doğrulama (Authentication)
+API güvenliği için API Key tabanlı kimlik doğrulama mekanizması uygulanmıştır:
+•	Her istek Authorization header'ı ile API anahtarı göndermek zorundadır.
+•	Geçersiz veya eksik anahtar durumunda 401 Unauthorized döner.
+•	API anahtarları .env dosyasında saklanır, kod içine gömülmez.
+// middleware/auth.js
+const authenticate = (req, res, next) => {
+  const apiKey = req.headers['authorization'];
+  if (!apiKey || apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+  next();
+};
+
+### 4. Entegrasyon Testleri
+API'nin doğru çalıştığını doğrulamak için entegrasyon testleri yazılmıştır:
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>Beklenen Sonuç</th>
+      <th>Durum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Geçerli API key ile istek</td>
+      <td>200 OK + veri döner</td>
+      <td>&#10003; Geçti</td>
+    </tr>
+    <tr>
+      <td>Geçersiz API key ile istek</td>
+      <td>401 Unauthorized</td>
+      <td>&#10003; Geçti</td>
+    </tr>
+    <tr>
+      <td>Var olmayan bölge sorgusu</td>
+      <td>404 Not Found</td>
+      <td>&#10003; Geçti</td>
+    </tr>
+    <tr>
+      <td>Eksik parametre ile istek</td>
+      <td>400 Bad Request</td>
+      <td>&#10003; Geçti</td>
+    </tr>
+    <tr>
+      <td>Başarılı trafik verisi formatı</td>
+      <td>JSON şeması doğru</td>
+      <td>&#10003; Geçti</td>
+    </tr>
+  </tbody>
+</table>
+
+### 5. API Dokümantasyonu
+Endpoint'lerin kullanımını açıklayan dokümantasyon oluşturulmuştur.
+Base URL: http://localhost:3000/api/v1
+Headers:
+Authorization: <API_KEY>
+Content-Type: application/json
+Hata Kodları:
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Kod</th>
+      <th>Açıklama</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>200</td>
+      <td>Başarılı</td>
+    </tr>
+    <tr>
+      <td>400</td>
+      <td>Geçersiz istek parametresi</td>
+    </tr>
+    <tr>
+      <td>401</td>
+      <td>Kimlik doğrulama hatası</td>
+    </tr>
+    <tr>
+      <td>404</td>
+      <td>Kaynak bulunamadı</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>Sunucu hatası</td>
+    </tr>
+  </tbody>
+</table>
+
+### 🧰 Kullanılan Teknolojiler 
+<style>
+  .custom-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+  .custom-table th, .custom-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+  .custom-table th { background-color: #337ab7; color: white; }
+  .custom-table tr:nth-child(even) { background-color: #eef2f5; }
+  .custom-table tr:nth-child(odd) { background-color: #dee4ea; }
+</style>
+
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Teknoloji</th>
+      <th>Açıklama</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Node.js + Express.js</td>
+      <td>API geliştirme</td>
+    </tr>
+    <tr>
+      <td>Mongoose</td>
+      <td>MongoDB veri erişimi</td>
+    </tr>
+    <tr>
+      <td>dotenv</td>
+      <td>Ortam değişkeni yönetimi</td>
+    </tr>
+    <tr>
+      <td>Jest / Supertest</td>
+      <td>Entegrasyon testleri</td>
+    </tr>
+  </tbody>
+</table>
+
+### 📁 Dosya Yapısı
+api/
+├── src/
+│   ├── routes/
+│   │   └── traffic.js
+│   ├── controllers/
+│   │   └── trafficController.js
+│   ├── middleware/
+│   │   └── auth.js
+│   └── index.js
+├── tests/
+│   └── traffic.test.js
+└── package.json
+
+### 🔍 Sonuç
+Trafik verisi sunan temel REST API endpoint'i başarıyla geliştirilmiştir. API; bölge bazlı trafik yoğunluğu ve ortalama hız verisi döndürmekte, API Key ile güvenlik altına alınmakta ve entegrasyon testleriyle doğrulanmış durumdadır. Dokümantasyon tamamlanmış olup API dış uygulamalarla entegrasyona hazır haldedir.
+
 
 
 
