@@ -41,13 +41,13 @@ Bu hafta, Akıllı Şehir (Smart City) veri platformu projesinin geliştirme ort
  
  ## 📁 Proje Yapısı
 smart-city-platform/
-├── docker-compose.yml
-├── .env.example
-├── .gitignore
-└── api/
-├── src/
-└── index.js
-└── package.json
+ ├── docker-compose.yml
+ ├── .env.example
+ ├── .gitignore
+ └── api/
+ ├── src/
+ └── index.js
+ └── package.json
 
 ## 🔍 Sonuç
 Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, Node.js API) Docker Compose aracılığıyla ayağa kaldırılabilmektedir. Ortam; güvenli (.env kullanımı), taşınabilir (Docker tabanlı) ve ölçeklenebilir (konteyner mimarisi) biçimde tasarlanmıştır.
