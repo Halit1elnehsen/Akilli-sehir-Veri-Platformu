@@ -37,7 +37,7 @@ Bu hafta, Akıllı Şehir (Smart City) veri platformu projesinin geliştirme ort
 * Hassas bilgiler (veritabanı şifresi, port numaraları) `.env` dosyasına taşındı.
 * `.env` dosyası `.gitignore` ile versiyon kontrolünden dışlandı.
 * Servisler bağımsız konteynerler olarak çalıştığından yatay ölçeklendirmeye uygundur.
- ---
+ 
  ### 📁 Proje Yapısı
 smart-city-platform/
  ├── docker-compose.yml
@@ -55,4 +55,43 @@ Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, N
 ---
 
 ## 2.Hafta(3-10 Nisan)
+<details>
+<summary>👉 👤Mustafa Alp : Veritabanı Seçimi ve Veri Modeli Tasarımı </summary>
+ 
+## 📋 Görev Açıklaması
+Bu hafta, Akıllı Şehir (Smart City) veri platformu projesi için uygun NoSQL veritabanı teknolojisinin seçilmesi ve veri modelinin tasarlanması gerçekleştirilmiştir. Başlıca NoSQL çözümleri karşılaştırılmış; veri hacmi, sorgulama karmaşıklığı, ölçeklenebilirlik ve performans kriterleri değerlendirilerek en uygun veritabanı belirlenmiştir.
+## 🔍 NoSQL Veritabanı Karşılaştırması
+<table>
+  <tr>
+    <th>Veritabanı</th>
+    <th>Tür</th>
+    <th>Güçlü Yönler</th>
+    <th>Zayıf Yönler</th>
+    <th>Uygunluk</th>
+  </tr>
+  <tr>
+    <td>MongoDB</td>
+    <td>Döküman</td>
+    <td>Esnek şema, güçlü sorgulama, yatay ölçekleme</td>
+    <td>Bellek kullanımı yüksek</td>
+    <td>✓ Yüksek</td>
+  </tr>
+  <tr>
+    <td>Cassandra</td>
+    <td>Geniş Sütun</td>
+    <td>Yüksek yazma hızı, dağıtık yapı</td>
+    <td>Sorgulama kısıtlı</td>
+    <td>◻ Orta</td>
+  </tr>
+  <tr>
+    <td>Redis</td>
+    <td>Anahtar-Değer</td>
+    <td>Çok hızlı, cache için ideal</td>
+    <td>Kalıcı veri yönetimi zayıf</td>
+    <td>◻ Kısmi</td>
+  </tr>
+</table>
+
+
+
 
