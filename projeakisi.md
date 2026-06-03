@@ -53,5 +53,6 @@ Geliştirme ortamı başarıyla kurulmuş olup tüm servisler (MongoDB, Kafka, N
 
 </details>
 ---
+
 ## 2.Hafta(3-10 Nisan)
 
